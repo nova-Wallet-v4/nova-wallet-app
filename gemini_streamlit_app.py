@@ -1,5 +1,16 @@
 from __future__ import annotations
 
+import sys
+import types
+
+# Python 3.14+ এর জন্য imghdr অনুপস্থিত থাকলে ডামি মডিউল তৈরি করে ত্রুটি সমাধান করা হচ্ছে
+try:
+    import imghdr
+except ImportError:
+    imghdr = types.ModuleType('imghdr')
+    imghdr.what = lambda file, h=None: None
+    sys.modules['imghdr'] = imghdr
+
 import json
 import os
 from io import BytesIO
@@ -277,8 +288,6 @@ with chat_tab:
                     )
 
                 except Exception as error:
-                    # Keep the failed user message out of history
-                    # so it can be retried.
                     st.session_state.chat_messages.pop()
                     show_error(error)
 
